@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevSolve - User Profile</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 20px;
+      }
+
+      .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 30px;
+      }
+
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .profile-info {
+        flex: 1;
+      }
+
+      .profile-username {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .profile-email {
+        color: #666;
+        font-size: 16px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .edit-icon {
+        margin-left: 10px;
+        cursor: pointer;
+        color: #777;
+      }
+
+      .about-section {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .about-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .about-title {
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+      .about-content {
+        color: #333;
+        line-height: 1.5;
+      }
+
+      .tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .tab {
+        padding: 10px 20px;
+        font-size: 18px;
+        font-weight: 500;
+        cursor: pointer;
+        color: #555;
+        border-bottom: 3px solid transparent;
+      }
+
+      .tab.active {
+        color: #333;
+        border-bottom: 3px solid #8e44ad;
+      }
+
+      .question-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+
+      .question-title {
+        font-size: 20px;
+        font-weight: 500;
+        color: #333;
+        text-decoration: none;
+      }
+
+      .question-title:hover {
+        color: #8e44ad;
+      }
+
+      .vote-section {
+        display: flex;
+        align-items: center;
+      }
+
+      .vote-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #777;
+      }
+
+      .vote-count {
+        margin: 0 10px;
+        font-weight: 500;
+      }
+
+      .question-content {
+        color: #555;
+        margin-bottom: 15px;
+        max-height: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .question-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .tags {
+        display: flex;
+        gap: 10px;
+      }
+
+      .tag {
+        background-color: #f0f0f0;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 14px;
+        color: #555;
+      }
+
+      .question-meta {
+        color: #777;
+        font-size: 14px;
+      }
+
+      .edit-delete-section {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .edit-button, .delete-button {
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+      }
+
+      .edit-button {
+        background-color: #e9d8f4;
+        color: #8e44ad;
+      }
+
+      .delete-button {
+        background-color: #f8d7da;
+        color: #dc3545;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('navbar') %>
+    
+    <div class="container">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <% if (user.profile_image) { %>
+            <img src="<%= user.profile_image %>" alt="<%= user.username %>'s profile" />
+          <% } else { %>
+            <span style="font-size: 60px; color: #888;"><%= user.username.charAt(0).toUpperCase() %></span>
+          <% } %>
+        </div>
+        <div class="profile-info">
+          <h1 class="profile-username">@<%= user.username %></h1>
+          <div class="profile-email">
+            <%= user.email %>
+            <% if (isOwnProfile) { %>
+              <span class="edit-icon" title="Edit profile">
+                <a href="/edit-profile" style="color: inherit; text-decoration: none;">✏️</a>
+              </span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      
+      <div class="about-section">
+        <div class="about-header">
+          <h2 class="about-title">About</h2>
+          <% if (isOwnProfile) { %>
+            <span class="edit-icon" title="Edit about">
+              <a href="/edit-profile" style="color: inherit; text-decoration: none;">✏️</a>
+            </span>
+          <% } %>
+        </div>
+        <p class="about-content"><%= user.about || "No information provided." %></p>
+      </div>
+      
+      <div class="tabs">
+        <div class="tab active" id="tab-questions">My Questions</div>
+        <div class="tab" id="tab-answers">My Answers</div>
+      </div>
+      
+      <div id="questions-content">
+        <% if (userQuestions && userQuestions.length > 0) { %>
+          <% userQuestions.forEach(function(question) { %>
+            <div class="question-card">
+              <div class="question-header">
+                <a href="/question/<%= question._id %>" class="question-title"><%= question.title %></a>
+                <div class="vote-section">
+                  <span class="vote-count"><%= question.votes || 0 %></span>
+                  <span style="color: #555; font-size: 14px;">votes</span>
+                </div>
+              </div>
+              <div class="question-content">
+                <%= question.body %>
+              </div>
+              <div class="question-footer">
+                <div class="tags">
+                  <% if (Array.isArray(question.tags) && question.tags.length > 0) { %>
+                    <% question.tags.forEach(function(tag) { %>
+                      <span class="tag"><%= tag %></span>
+                    <% }); %>
+                  <% } else { %>
+                    <span class="tag">No tags</span>
+                  <% } %>
+                </div>
+                <div class="question-meta">
+                  Posted <%= new Date(question.createdTime || question.created || Date.now()).toLocaleDateString('en-US', { 
+                    month: 'long', day: 'numeric', year: 'numeric' }) %> at <%= new Date(question.createdTime || question.created || Date.now()).toLocaleTimeString('en-US', { 
+                    hour: '2-digit', minute: '2-digit' }) %>
+                </div>
+              </div>
+              <% if (isOwnProfile) { %>
+                <div class="edit-delete-section">
+                  <a href="/edit-question/<%= question._id %>" class="edit-button">Edit</a>
+                  <button class="delete-button" onclick="confirmDelete('<%= question._id %>')">Delete</button>
+                </div>
+              <% } %>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="question-card">
+            <p>No questions found.</p>
+          </div>
+        <% } %>
+      </div>
+      
+      <div id="answers-content" class="hidden">
+        <% if (userAnswers && userAnswers.length > 0) { %>
+          <% userAnswers.forEach(function(answer) { %>
+            <div class="question-card">
+              <div class="question-header">
+                <a href="/question/<%= answer.questionId %>" class="question-title">
+                  <%= answer.questionTitle || "Answer to question" %>
+                </a>
+                <div class="vote-section">
+                  <span class="vote-count"><%= answer.votes || 0 %></span>
+                  <span style="color: #555; font-size: 14px;">votes</span>
+                  <% if (answer.accepted) { %>
+                    <span style="color: #4caf50; margin-left: 10px;">✓ Accepted</span>
+                  <% } %>
+                </div>
+              </div>
+              <div class="question-content">
+                <%= answer.body %>
+                <% if (answer.code) { %>
+                  <div style="background-color: #f8f8f8; padding: 10px; border-radius: 4px; margin-top: 10px; font-family: monospace;">
+                    <%= answer.code %>
+                  </div>
+                <% } %>
+              </div>
+              <div class="question-footer">
+                <div style="font-style: italic; color: #666;">
+                  On question: <a href="/question/<%= answer.questionId %>" style="color: #8e44ad; text-decoration: none;">
+                    <%= answer.questionTitle || "View question" %>
+                  </a>
+                </div>
+                <div class="question-meta">
+                  Answered <%= new Date(answer.createdTime || answer.created || Date.now()).toLocaleDateString('en-US', { 
+                    month: 'long', day: 'numeric', year: 'numeric' }) %> at <%= new Date(answer.createdTime || answer.created || Date.now()).toLocaleTimeString('en-US', { 
+                    hour: '2-digit', minute: '2-digit' }) %>
+                </div>
+              </div>
+              <% if (isOwnProfile) { %>
+                <div class="edit-delete-section">
+                  <a href="/edit-answer/<%= answer._id %>" class="edit-button">Edit</a>
+                  <button class="delete-button" onclick="confirmDeleteAnswer('<%= answer._id %>')">Delete</button>
+                </div>
+              <% } %>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="question-card">
+            <p>No answers found.</p>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const tabQuestions = document.getElementById('tab-questions');
+        const tabAnswers = document.getElementById('tab-answers');
+        const questionsContent = document.getElementById('questions-content');
+        const answersContent = document.getElementById('answers-content');
+        
+        tabQuestions.addEventListener('click', function() {
+          tabQuestions.classList.add('active');
+          tabAnswers.classList.remove('active');
+          questionsContent.classList.remove('hidden');
+          answersContent.classList.add('hidden');
+        });
+        
+        tabAnswers.addEventListener('click', function() {
+          tabAnswers.classList.add('active');
+          tabQuestions.classList.remove('active');
+          answersContent.classList.remove('hidden');
+          questionsContent.classList.add('hidden');
+        });
+      });
+      
+      function confirmDelete(questionId) {
+        if (confirm('Are you sure you want to delete this question? This action cannot be undone.')) {
+          window.location.href = '/delete-question/' + questionId;
+        }
+      }
+      
+      function confirmDeleteAnswer(answerId) {
+        if (confirm('Are you sure you want to delete this answer? This action cannot be undone.')) {
+          window.location.href = '/delete-answer/' + answerId;
+        }
+      }
+    </script>
+  </body>
+</html>

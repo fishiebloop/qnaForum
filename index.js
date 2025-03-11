@@ -14,6 +14,12 @@ const {
   isQuestionAuthor,
   initDBIfNecessary,
   updateQuestionVotes,
+  getUserQuestions,
+  getUserAnswers,
+  updateUserProfile,
+  deleteQuestion,
+  deleteAnswer,
+  isAnswerAuthor,
 } = require("./lib/database");
 const session = require("express-session");
 const { MongoClient, ObjectId } = require("mongodb");
@@ -152,25 +158,25 @@ app.get("/question/:id", requireAuth, async (req, res) => {
   try {
     const questionId = req.params.id;
     const sortBy = req.query.sort || "recent";
-    
+
     // Get the question details
     const question = await getQuestionById(questionId);
-    
+
     if (!question) {
       return res.status(404).send("Question not found");
     }
-    
+
     // Get answers for the question with the specified sort order
     const answers = await getAnswersForQuestion(questionId, sortBy);
-    
+
     // Check if the current user is the author of the question
     const isAuthor = await isQuestionAuthor(questionId, req.session.userId);
-    
-    res.render("question", { 
+
+    res.render("question", {
       question,
       answers,
       sortBy,
-      isQuestionAuthor: isAuthor
+      isQuestionAuthor: isAuthor,
     });
   } catch (error) {
     console.error("Error fetching question:", error);
@@ -182,7 +188,7 @@ app.get("/question/:id", requireAuth, async (req, res) => {
 app.post("/submit-answer", requireAuth, async (req, res) => {
   try {
     const { question_id, answer, code } = req.body;
-    
+
     const newAnswer = {
       body: answer,
       code: code || null,
@@ -191,11 +197,11 @@ app.post("/submit-answer", requireAuth, async (req, res) => {
       userId: req.session.userId,
       author: req.session.username, // Add the author's username
       votes: 0,
-      accepted: false
+      accepted: false,
     };
-    
+
     await addAnswer(newAnswer);
-    
+
     res.redirect(`/question/${question_id}`);
   } catch (error) {
     console.error("Error submitting answer:", error);
@@ -207,11 +213,11 @@ app.post("/submit-answer", requireAuth, async (req, res) => {
 app.post("/vote", requireAuth, async (req, res) => {
   try {
     const { question_id, vote_type } = req.body;
-    
+
     // Update vote count
     const voteChange = vote_type === "up" ? 1 : -1;
     await updateQuestionVotes(question_id, voteChange);
-    
+
     // Redirect back to the previous page
     res.redirect("back");
   } catch (error) {
@@ -224,11 +230,11 @@ app.post("/vote", requireAuth, async (req, res) => {
 app.post("/vote-answer", requireAuth, async (req, res) => {
   try {
     const { answer_id, question_id, vote_type } = req.body;
-    
+
     // Update vote count
     const voteChange = vote_type === "up" ? 1 : -1;
     await updateAnswerVotes(answer_id, voteChange);
-    
+
     // Redirect back to the question page
     res.redirect(`/question/${question_id}`);
   } catch (error) {
@@ -241,21 +247,120 @@ app.post("/vote-answer", requireAuth, async (req, res) => {
 app.post("/accept-answer", requireAuth, async (req, res) => {
   try {
     const { answer_id, question_id } = req.body;
-    
+
     // Check if the current user is the question author
     const isAuthor = await isQuestionAuthor(question_id, req.session.userId);
-    
+
     if (!isAuthor) {
-      return res.status(403).send("Only the question author can accept answers");
+      return res
+        .status(403)
+        .send("Only the question author can accept answers");
     }
-    
+
     // Mark the answer as accepted
     await acceptAnswer(answer_id, question_id);
-    
+
     // Redirect back to the question page
     res.redirect(`/question/${question_id}`);
   } catch (error) {
     console.error("Error accepting answer:", error);
     res.status(500).send("Error accepting answer");
+  }
+});
+
+app.get("/profile/:username?", requireAuth, async (req, res) => {
+  try {
+    const username = req.params.username || req.session.username;
+    const user = await getUserByUsername(username);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Check if this is the user's own profile
+    const isOwnProfile = user.username === req.session.username;
+
+    // Get the user's questions
+    const userQuestions = await getUserQuestions(user._id);
+
+    // Get the user's answers with question titles
+    const userAnswers = await getUserAnswers(user._id);
+
+    res.render("profile", {
+      user,
+      isOwnProfile,
+      userQuestions,
+      userAnswers,
+    });
+  } catch (error) {
+    console.error("Error loading profile:", error);
+    res.status(500).send("Error loading profile.");
+  }
+});
+
+// Edit profile page
+app.get("/edit-profile", requireAuth, async (req, res) => {
+  try {
+    const user = await getUserByUsername(req.session.username);
+    res.render("edit-profile", { user });
+  } catch (error) {
+    console.error("Error loading edit profile page:", error);
+    res.status(500).send("Error loading edit profile page.");
+  }
+});
+
+// Update profile route
+app.post("/update-profile", requireAuth, async (req, res) => {
+  try {
+    const { email, about } = req.body;
+
+    await updateUserProfile(req.session.userId, { email, about });
+
+    res.redirect("/profile");
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).send("Error updating profile.");
+  }
+});
+
+// Delete question route
+app.get("/delete-question/:id", requireAuth, async (req, res) => {
+  try {
+    const questionId = req.params.id;
+
+    // Check if the user is the author of the question
+    const isAuthor = await isQuestionAuthor(questionId, req.session.userId);
+
+    if (!isAuthor) {
+      return res.status(403).send("You can only delete your own questions");
+    }
+
+    await deleteQuestion(questionId);
+
+    res.redirect("/profile");
+  } catch (error) {
+    console.error("Error deleting question:", error);
+    res.status(500).send("Error deleting question.");
+  }
+});
+
+// Delete answer route
+app.get("/delete-answer/:id", requireAuth, async (req, res) => {
+  try {
+    const answerId = req.params.id;
+
+    // Check if the user is the author of the answer
+    const isAuthor = await isAnswerAuthor(answerId, req.session.userId);
+
+    if (!isAuthor) {
+      return res.status(403).send("You can only delete your own answers");
+    }
+
+    await deleteAnswer(answerId);
+
+    res.redirect("/profile");
+  } catch (error) {
+    console.error("Error deleting answer:", error);
+    res.status(500).send("Error deleting answer.");
   }
 });
