@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevSolve - Question Details</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+      }
+
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 50px;
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        font-size: 30px;
+        font-weight: bold;
+        color: #111;
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 20px;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #555;
+        font-size: 14px;
+      }
+
+      .nav-icon {
+        font-size: 20px;
+        margin-bottom: 2px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 20px;
+      }
+
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+      }
+
+      .question-title-section {
+        flex-grow: 1;
+      }
+
+      .question-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #000000;
+      }
+
+      .question-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .question-tags {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .tag {
+        background-color: #f0f0f0;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 14px;
+        color: #555;
+      }
+
+      .question-date {
+        color: #777;
+        font-size: 14px;
+      }
+
+      .question-details {
+        background-color: white;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      .question-body {
+        color: #444;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      .vote-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 20px;
+      }
+
+      .vote-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #777;
+      }
+
+      .vote-count {
+        font-weight: 500;
+        margin: 5px 0;
+      }
+
+      .answers-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .answers-count {
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .sort-options {
+        display: flex;
+        gap: 10px;
+      }
+
+      .sort-option {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 6px 15px;
+        cursor: pointer;
+        font-size: 14px;
+        text-decoration: none;
+        color: #333;
+      }
+
+      .sort-option.active {
+        background-color: #eee;
+        font-weight: 500;
+      }
+
+      .answer-card {
+        background-color: white;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      .answer-body {
+        color: #444;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      .answer-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #ddd;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #777;
+        font-weight: 500;
+      }
+
+      .user-name {
+        font-weight: 500;
+      }
+
+      .answer-date {
+        color: #777;
+        font-size: 14px;
+      }
+
+      .answer-form {
+        background-color: white;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+
+      .form-textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        min-height: 150px;
+        resize: vertical;
+        margin-bottom: 15px;
+      }
+
+      .form-submit {
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .back-button {
+        display: inline-block;
+        background-color: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 15px;
+        margin-bottom: 20px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .back-button:hover {
+        background-color: #eee;
+      }
+
+      .accepted-answer {
+        border-left: 4px solid #4caf50;
+      }
+
+      .accepted-label {
+        color: #4caf50;
+        font-weight: 500;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+      }
+
+      .code-block {
+        background-color: #f8f8f8;
+        padding: 15px;
+        border-radius: 4px;
+        border-left: 3px solid #ddd;
+        font-family: monospace;
+        overflow-x: auto;
+        margin: 15px 0;
+      }
+
+      @media (max-width: 768px) {
+        .question-header {
+          flex-direction: column;
+        }
+        
+        .vote-section {
+          flex-direction: row;
+          margin-left: 0;
+          margin-top: 10px;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('navbar') %>
+    
+    <div class="container">
+      <a href="/home" class="back-button">← Back to Questions</a>
+      
+      <!-- Question Section -->
+      <div class="question-details">
+        <div class="question-header">
+          <div class="question-title-section">
+            <h1 class="question-title"><%= question.title %></h1>
+            <div class="question-meta">
+              <div class="question-tags">
+                <% if (Array.isArray(question.tags) && question.tags.length > 0) { %> 
+                  <% question.tags.forEach(function(tag) { %>
+                    <span class="tag"><%= tag %></span>
+                  <% }); %>
+                <% } else { %>
+                  <span class="tag">No tags</span>
+                <% } %>
+              </div>
+              <div class="question-date">
+                Posted <%= new Date(question.createdTime || question.created || Date.now()).toLocaleDateString('en-US', { 
+                  month: 'long', day: 'numeric', year: 'numeric' }) %> 
+                at <%= new Date(question.createdTime || question.created || Date.now()).toLocaleTimeString('en-US', { 
+                  hour: '2-digit', minute: '2-digit' }) %>
+              </div>
+            </div>
+          </div>
+          <div class="vote-section">
+            <form action="/vote" method="post" style="margin: 0">
+              <input type="hidden" name="question_id" value="<%= question._id %>" />
+              <input type="hidden" name="vote_type" value="up" />
+              <button type="submit" class="vote-button">⬆</button>
+            </form>
+            <span class="vote-count"><%= question.votes || 0 %></span>
+            <form action="/vote" method="post" style="margin: 0">
+              <input type="hidden" name="question_id" value="<%= question._id %>" />
+              <input type="hidden" name="vote_type" value="down" />
+              <button type="submit" class="vote-button">⬇</button>
+            </form>
+          </div>
+        </div>
+        <div class="question-body">
+          <%= question.body %>
+          
+          <% if (question.code) { %>
+            <div class="code-block">
+              <%= question.code %>
+            </div>
+          <% } %>
+        </div>
+        <div class="user-info">
+          <div class="user-avatar">
+            <%= question.author ? question.author.charAt(0).toUpperCase() : 'U' %>
+          </div>
+          <span class="user-name"><%= question.author || 'Anonymous' %></span>
+        </div>
+      </div>
+      
+      <!-- Answers Section -->
+      <div class="answers-header">
+        <h2 class="answers-count"><%= locals.answers ? answers.length : 0 %> Answers</h2>
+        <div class="sort-options">
+          <a href="/question/<%= question._id %>?sort=votes" class="sort-option <%= locals.sortBy === 'votes' ? 'active' : '' %>">Highest votes</a>
+          <a href="/question/<%= question._id %>?sort=recent" class="sort-option <%= locals.sortBy === 'recent' || !locals.sortBy ? 'active' : '' %>">Recent</a>
+          <a href="/question/<%= question._id %>?sort=oldest" class="sort-option <%= locals.sortBy === 'oldest' ? 'active' : '' %>">Oldest</a>
+        </div>
+      </div>
+      
+      <% if (locals.answers && answers.length > 0) { %>
+        <% answers.forEach(function(answer, index) { %>
+          <div class="answer-card <%= answer.accepted ? 'accepted-answer' : '' %>">
+            <% if (answer.accepted) { %>
+              <div class="accepted-label">✓ Accepted Answer</div>
+            <% } %>
+            <div class="answer-body">
+              <%= answer.body %>
+              
+              <% if (answer.code) { %>
+                <div class="code-block">
+                  <%= answer.code %>
+                </div>
+              <% } %>
+            </div>
+            <div class="answer-meta">
+              <div class="user-info">
+                <div class="user-avatar">
+                  <%= answer.author ? answer.author.charAt(0).toUpperCase() : 'U' %>
+                </div>
+                <span class="user-name"><%= answer.author || 'Anonymous' %></span>
+              </div>
+              <div class="answer-date">
+                Answered <%= new Date(answer.createdTime || answer.created || Date.now()).toLocaleDateString('en-US', { 
+                  month: 'long', day: 'numeric', year: 'numeric' }) %> 
+                at <%= new Date(answer.createdTime || answer.created || Date.now()).toLocaleTimeString('en-US', { 
+                  hour: '2-digit', minute: '2-digit' }) %>
+              </div>
+            </div>
+            <div class="vote-section" style="position: absolute; top: 20px; right: 20px;">
+              <form action="/vote-answer" method="post" style="margin: 0">
+                <input type="hidden" name="answer_id" value="<%= answer._id %>" />
+                <input type="hidden" name="question_id" value="<%= question._id %>" />
+                <input type="hidden" name="vote_type" value="up" />
+                <button type="submit" class="vote-button">⬆</button>
+              </form>
+              <span class="vote-count"><%= answer.votes || 0 %></span>
+              <form action="/vote-answer" method="post" style="margin: 0">
+                <input type="hidden" name="answer_id" value="<%= answer._id %>" />
+                <input type="hidden" name="question_id" value="<%= question._id %>" />
+                <input type="hidden" name="vote_type" value="down" />
+                <button type="submit" class="vote-button">⬇</button>
+              </form>
+              
+              <% if (locals.isQuestionAuthor) { %>
+                <form action="/accept-answer" method="post" style="margin-top: 10px;">
+                  <input type="hidden" name="answer_id" value="<%= answer._id %>" />
+                  <input type="hidden" name="question_id" value="<%= question._id %>" />
+                  <button type="submit" class="vote-button" style="color: <%= answer.accepted ? '#4caf50' : '#777' %>">✓</button>
+                </form>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="answer-card">
+          <div class="answer-body">
+            No answers yet. Be the first to answer this question!
+          </div>
+        </div>
+      <% } %>
+      
+      <!-- Answer Form -->
+      <div class="answer-form">
+        <h3 class="form-title">Your Answer</h3>
+        <form action="/submit-answer" method="post">
+          <input type="hidden" name="question_id" value="<%= question._id %>" />
+          <textarea 
+            name="answer" 
+            class="form-textarea" 
+            placeholder="Write your answer here..."
+            required
+          ></textarea>
+          <textarea 
+            name="code" 
+            class="form-textarea" 
+            placeholder="Add code example (optional)"
+          ></textarea>
+          <button type="submit" class="form-submit">Post Your Answer</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Function to highlight code blocks if needed
+      document.addEventListener('DOMContentLoaded', function() {
+        // You can add code highlighting library here if needed
+      });
+      
+      // Function to handle accept answer toggle
+      function acceptAnswer(answerId, questionId) {
+        // This would be handled by the form submission
+      }
+    </script>
+  </body>
+</html>

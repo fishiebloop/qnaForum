@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevSolve</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+      }
+
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 50px;
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        font-size: 30px;
+        font-weight: bold;
+        color: #111;
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 20px;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #555;
+        font-size: 14px;
+      }
+
+      .nav-icon {
+        font-size: 20px;
+        margin-bottom: 2px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 20px;
+      }
+
+      .search-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .search-container {
+        display: flex;
+        align-items: center;
+        background-color: #f0edf2;
+        border-radius: 30px;
+        padding: 10px 20px;
+        width: 70%;
+      }
+
+      .search-icon {
+        color: #777;
+        margin-right: 10px;
+      }
+
+      .search-input {
+        background: transparent;
+        border: none;
+        outline: none;
+        width: 100%;
+        padding: 5px;
+        font-size: 16px;
+      }
+
+      .search-button {
+        background-color: #777;
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+
+      .ask-button {
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .ask-button:hover {
+        background-color: #555;
+      }
+
+      .filter-section {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .sort-label {
+        margin-right: 10px;
+        font-weight: 500;
+      }
+
+      .sort-options {
+        display: flex;
+        gap: 10px;
+        margin-right: 30px;
+      }
+
+      .sort-option {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 6px 15px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .sort-option.active {
+        background-color: #eee;
+      }
+
+      .filter-label {
+        margin-right: 10px;
+        font-weight: 500;
+      }
+
+      .tag-filters {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .add-tag-button {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      .tag-filter {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 14px;
+        color: #555;
+        display: flex;
+        align-items: center;
+      }
+
+      .tag-filter span {
+        margin-right: 5px;
+      }
+
+      .remove-tag {
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 5px;
+      }
+
+      .question-card {
+        background-color: white;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      .question-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #000000;
+      }
+
+      .question-body {
+        margin-bottom: 20px;
+        color: #444;
+        line-height: 1.5;
+      }
+
+      .question-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .question-tags {
+        display: flex;
+        gap: 10px;
+      }
+
+      .tag {
+        background-color: #f5f5f5;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 14px;
+        color: #555;
+      }
+
+      .question-date {
+        color: #777;
+        font-size: 14px;
+      }
+
+      .vote-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        right: 30px;
+      }
+
+      .vote-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #777;
+      }
+
+      .vote-count {
+        font-weight: 500;
+        margin: 5px 0;
+      }
+
+      .link {
+        color: #0077cc;
+        text-decoration: none;
+      }
+
+      .link:hover {
+        text-decoration: underline;
+      }
+
+      .ask-form {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .ask-form-container {
+        background-color: white;
+        border-radius: 6px;
+        padding: 30px;
+        width: 80%;
+        max-width: 600px;
+      }
+
+      .form-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+
+      .form-textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      .form-submit {
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .form-cancel {
+        background-color: #f5f5f5;
+        color: #333;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+
+      .form-buttons {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #tagInput {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 14px;
+        color: #555;
+        margin-right: 5px;
+        display: none;
+      }
+    </style>
+    <script>
+      function showAskForm() {
+        document.getElementById("askForm").style.display = "flex";
+      }
+
+      function hideAskForm() {
+        document.getElementById("askForm").style.display = "none";
+      }
+
+      function showTagInput() {
+        const tagInput = document.getElementById("tagInput");
+        tagInput.style.display = "inline-block";
+        tagInput.focus();
+      }
+
+      function addTag(event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          const tagInput = document.getElementById("tagInput");
+          const tag = tagInput.value.trim();
+
+          if (tag) {
+            // Get current tags from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentTags = urlParams.getAll("tag");
+
+            // Add new tag if it doesn't exist
+            if (!currentTags.includes(tag)) {
+              currentTags.push(tag);
+            }
+
+            // Build new URL with updated tags
+            urlParams.delete("tag");
+            currentTags.forEach((t) => urlParams.append("tag", t));
+
+            // Preserve sort parameter
+            const sortBy = urlParams.get("sort") || "recent";
+
+            // Redirect to filtered URL
+            window.location.href = `/home?${urlParams.toString()}`;
+          }
+
+          tagInput.value = "";
+          tagInput.style.display = "none";
+        }
+      }
+
+      function removeTag(tag) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentTags = urlParams.getAll("tag");
+
+        // Remove the tag
+        urlParams.delete("tag");
+        currentTags.forEach((t) => {
+          if (t !== tag) {
+            urlParams.append("tag", t);
+          }
+        });
+
+        // Redirect to filtered URL
+        window.location.href = `/home?${urlParams.toString()}`;
+      }
+    </script>
+  </head>
+  <body>
+    <%- include('navbar') %>
+    <!-- Main Content -->
+    <div class="container">
+      <!-- Search Section -->
+      <div class="search-section">
+        <form
+          action="/home"
+          method="get"
+          class="search-container"
+          style="margin: 0"
+        >
+          <span class="search-icon">≡</span>
+          <input
+            type="text"
+            name="search"
+            class="search-input"
+            placeholder="Search question"
+            value="<%= locals.search || '' %>"
+          />
+          <!-- Preserve current sort and tags -->
+          <% if (locals.sortBy) { %>
+          <input type="hidden" name="sort" value="<%= sortBy %>" />
+          <% } %> <% if (locals.selectedTags && selectedTags.length > 0) { %> <%
+          selectedTags.forEach(function(tag) { %>
+          <input type="hidden" name="tag" value="<%= tag %>" />
+          <% }); %> <% } %>
+          <button type="submit" class="search-button">🔍</button>
+        </form>
+        <button type="button" class="ask-button" onclick="showAskForm()">
+          Ask a Question
+        </button>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <span class="sort-label">Sort by</span>
+        <div class="sort-options">
+          <a
+            href="/home?sort=recent<%= locals.search ? '&search=' + search : '' %><%= locals.selectedTags && selectedTags.length > 0 ? selectedTags.map(tag => '&tag=' + encodeURIComponent(tag)).join('') : '' %>"
+            class="sort-option <%= locals.sortBy === 'recent' || !locals.sortBy ? 'active' : '' %>"
+            >Recent</a
+          >
+          <a
+            href="/home?sort=hot<%= locals.search ? '&search=' + search : '' %><%= locals.selectedTags && selectedTags.length > 0 ? selectedTags.map(tag => '&tag=' + encodeURIComponent(tag)).join('') : '' %>"
+            class="sort-option <%= locals.sortBy === 'answers' ? 'active' : '' %>"
+            >Most answered</a
+          >
+          <a
+            href="/home?sort=highest<%= locals.search ? '&search=' + search : '' %><%= locals.selectedTags && selectedTags.length > 0 ? selectedTags.map(tag => '&tag=' + encodeURIComponent(tag)).join('') : '' %>"
+            class="sort-option <%= locals.sortBy === 'votes' ? 'active' : '' %>"
+            >Highest rating</a
+          >
+        </div>
+        <span class="filter-label">Filter by tags</span>
+        <div class="tag-filters">
+          <% if (locals.selectedTags && selectedTags.length > 0) { %> <%
+          selectedTags.forEach(function(tag) { %>
+          <div class="tag-filter">
+            <span><%= tag %></span>
+            <span class="remove-tag" onclick="removeTag('<%= tag %>')">✕</span>
+          </div>
+          <% }); %> <% } %>
+          <input
+            type="text"
+            id="tagInput"
+            placeholder="Add tag..."
+            onkeydown="addTag(event)"
+          />
+          <button type="button" class="add-tag-button" onclick="showTagInput()">
+            +
+          </button>
+        </div>
+      </div>
+
+      <!-- Questions List -->
+      <div class="questions-list">
+        <% if (locals.questions && locals.questions.length > 0) { %>
+          <% locals.questions.forEach(function(question) { %>
+            <div class="question-card">
+                <h2 class="question-title">
+                    <a href="/question/<%= question._id %>" class="question-link"><%= question.title %></a>
+                  </h2>                  
+              <p class="question-body"><%= question.body %></p>
+              <div class="question-meta">
+                <div class="question-tags">
+                  <% if (Array.isArray(question.tags) && question.tags.length > 0) { %> 
+                    <% question.tags.forEach(function(tag) { %>
+                      <span class="tag"><%= tag %></span>
+                    <% }); %>
+                  <% } else { %>
+                    <span class="tag">No tags</span>
+                  <% } %>
+                </div>
+                <div class="question-date">
+                  Posted <%= new Date(question.createdTime || question.created || Date.now()).toLocaleDateString('en-US', { 
+                    month: 'long', day: 'numeric', year: 'numeric' }) %> 
+                  at <%= new Date(question.createdTime || question.created || Date.now()).toLocaleTimeString('en-US', { 
+                    hour: '2-digit', minute: '2-digit' }) %>
+                </div>
+              </div>
+              <div class="vote-section">
+                <form action="/vote" method="post" style="margin: 0">
+                  <input type="hidden" name="question_id" value="<%= question._id %>" />
+                  <input type="hidden" name="vote_type" value="up" />
+                  <button type="submit" class="vote-button">⬆</button>
+                </form>
+                <span class="vote-count"><%= question.votes || 0 %></span>
+                <form action="/vote" method="post" style="margin: 0">
+                  <input type="hidden" name="question_id" value="<%= question._id %>" />
+                  <input type="hidden" name="vote_type" value="down" />
+                  <button type="submit" class="vote-button">⬇</button>
+                </form>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="question-card">
+            <h2 class="question-title">No questions found</h2>
+            <p class="question-body">Be the first to ask a question!</p>
+          </div>
+        <% } %>
+      </div>
+      
+    <!-- Ask Question Form -->
+    <div class="ask-form" id="askForm">
+      <form class="ask-form-container" method="post" action="/submit-question">
+        <h2 class="form-title">Ask a Question</h2>
+        <div class="form-group">
+          <label class="form-label" for="questionTitle">Title</label>
+          <input
+            type="text"
+            id="questionTitle"
+            name="title"
+            class="form-input"
+            placeholder="What's your programming question? Be specific."
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="questionBody">Description</label>
+          <textarea
+            id="questionBody"
+            name="body"
+            class="form-textarea"
+            placeholder="Provide details about your problem..."
+            required
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="questionTags">Tags</label>
+          <input
+            type="text"
+            id="questionTags"
+            name="tags"
+            class="form-input"
+            placeholder="Add tags separated by commas (e.g., javascript,react,node.js)"
+            required
+          />
+        </div>
+        <div class="form-buttons">
+          <button type="button" class="form-cancel" onclick="hideAskForm()">
+            Cancel
+          </button>
+          <button type="submit" class="form-submit">Post Question</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
